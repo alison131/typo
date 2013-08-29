@@ -416,6 +416,20 @@ class Article < Content
     user.admin? || user_id == user.id
   end
 
+  def merge_with(other_article_id)
+    other_article = Article.find(other_article_id)
+    #todo refactor below
+    if other_article
+      new_body = body + other_article.body
+      new_comments = comments + other_article.comments
+      update_attribute(:body, new_body)
+      update_attribute(:comments, new_comments)
+      self.reload
+      other_article.delete
+    end
+    self
+  end
+
   protected
 
   def set_published_at
